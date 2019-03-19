@@ -17,6 +17,7 @@ comando man [comando]
 (d) Trocar de pasta.
 
 cd .. é usado para voltar uma pasta no diretorio atual.
+cd [nome da pasta] troca para a pasta selecionada.
 
 (m) Apresentar o conteúdo de um arquivo.
 
