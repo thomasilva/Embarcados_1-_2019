@@ -1,84 +1,3 @@
-# importando bibliotecas de captura - tempo e GPIO
-import curses
-import RPi.GPIO as GPIO
-import time
-
-# definindo a pinagem - GPIO - pinos de saída
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(7,GPIO.OUT)
-GPIO.setup(11,GPIO.OUT)
-GPIO.setup(13,GPIO.OUT)
-GPIO.setup(15,GPIO.OUT)
-
-# Apresentando a janela de dados, desativar o retorno 
-# do teclado para ativar a tela
-# Resposta teclada em tempo real (sem espera) 
-# usando valores especiais nas teclas do cursor
-screen = curses.initscr()
-curses.noecho() 
-curses.cbreak()
-screen.keypad(True)
-
-try:
-        while True:   
-            char = screen.getch()
-            if char == ord('q'):
-                break
-            elif char == curses.KEY_UP:
-                GPIO.output(7,False)
-                GPIO.output(11,True)
-                GPIO.output(13,False)
-                GPIO.output(15,True)
-            elif char == curses.KEY_DOWN:
-                GPIO.output(7,True)
-                GPIO.output(11,False)
-                GPIO.output(13,True)
-                GPIO.output(15,False)
-            elif char == curses.KEY_RIGHT:
-                GPIO.output(7,True)
-                GPIO.output(11,False)
-                GPIO.output(13,False)
-                GPIO.output(15,True)
-            elif char == curses.KEY_LEFT:
-                GPIO.output(7,False)
-                GPIO.output(11,True)
-                GPIO.output(13,True)
-                GPIO.output(15,False)
-            elif char == ord('d'):
-                GPIO.output(11,True)
-                GPIO.output(15,True)
-                time.sleep(.5)
-                GPIO.output(7,True)
-                GPIO.output(11,False)
-                GPIO.output(13,True)
-                GPIO.output(15,False)
-                time.sleep(.5)
-                GPIO.output(7,True)
-                GPIO.output(11,False)
-                GPIO.output(13,False)
-                GPIO.output(15,True)
-                time.sleep(.5)
-                GPIO.output(7,False)
-                GPIO.output(11,True)
-                GPIO.output(13,True)
-                GPIO.output(15,False)
-                time.sleep(.5)
-                GPIO.output(11,False)
-                GPIO.output(13,False)
-            elif char == 10:
-                GPIO.output(7,False)
-                GPIO.output(11,False)
-                GPIO.output(13,False)
-                GPIO.output(15,False)
-             
-finally:
-    # finalizar, fechar o cursor corretamente, inc, ligue o eco novamente!
-    curses.nocbreak(); screen.keypad(0); curses.echo()
-    curses.endwin()
-    GPIO.cleanup()
-
-Código para o sensor de temperatura termopar
-
 // include files
 #include <stdio.h>
 #include <errno.h>
@@ -94,7 +13,7 @@ Código para o sensor de temperatura termopar
 #include <string.h>
 #include <time.h>
 
-// definições
+// definiÃ§Ãµes
 #define DBG_PRINT 0
 #define BCM2708_PERI_BASE        0x20000000
 #define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
@@ -116,9 +35,9 @@ Código para o sensor de temperatura termopar
 #define INP_GPIO(g) *(gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
 #define OUT_GPIO(g) *(gpio+((g)/10)) |=  (1<<(((g)%10)*3))
 #define SET_GPIO_ALT(g,a) *(gpio+(((g)/10))) |= (((a)<=3?(a)+4:(a)==4?3:2)<<(((g)%10)*3))
-// define bits que são 1 ignora bits que são 0
+// define bits que sÃ£o 1 ignora bits que sÃ£o 0
 #define GPIO_SET *(gpio+7)
-//define bits que são 1 ignora bits que são 0
+//define bits que sÃ£o 1 ignora bits que sÃ£o 0
 #define GPIO_CLR *(gpio+10)
 // 0 se BAIXO, (1<<g) se ALTO
 #define GET_GPIO(g) (*(gpio+13)&(1<<g))
@@ -130,7 +49,7 @@ Código para o sensor de temperatura termopar
 // typedefs
 typedef struct spi_ioc_transfer spi_t;
 
-// variáveis globais
+// variÃ¡veis globais
 int  mem_fd;
 void *gpio_map;
 volatile unsigned *gpio;
@@ -150,7 +69,7 @@ unsigned char txbuf[BUFSIZE];
 unsigned char rxbuf[BUFSIZE];
 int local_comp;
 
-// Funções
+// FunÃ§Ãµes
 int
 delay_ms(unsigned int msec)
 {
@@ -165,7 +84,7 @@ delay_ms(unsigned int msec)
   return(0);
 }
 
-// Configura uma região de memória para acesso GPIO
+// Configura uma regiÃ£o de memÃ³ria para acesso GPIO
 void setup_io()
 {
    /* open /dev/mem */
@@ -176,22 +95,22 @@ void setup_io()
 
    /* mmap GPIO */
    gpio_map = mmap(
-      NULL,             //Qualquer endereço no nosso espaço irá fazer
+      NULL,             //Qualquer endereÃ§o no nosso espaÃ§o irÃ¡ fazer
       BLOCK_SIZE,       //Tamanho mapeado
-      PROT_READ|PROT_WRITE,//Habilita leitura e escrita para a memória mapeada
+      PROT_READ|PROT_WRITE,//Habilita leitura e escrita para a memÃ³ria mapeada
       MAP_SHARED,       //Compartilha com outros processos
       mem_fd,           //Arquivo para mapear
       GPIO_BASE         
    );
 
-   close(mem_fd); //Não é necessário manter mem_fd aberto após mmap
+   close(mem_fd); //NÃ£o Ã© necessÃ¡rio manter mem_fd aberto apÃ³s mmap
 
    if (gpio_map == MAP_FAILED) {
       printf("mmap error %d\n", (int)gpio_map);
       exit(-1);
    }
 
-   // Sempre usa ponto volátil
+   // Sempre usa ponto volÃ¡til
    gpio = (volatile unsigned *)gpio_map;
 }
 
@@ -334,7 +253,7 @@ lcd_init(void)
 {
 	GPIO_SET = 1<<LCD_RS_GPIO;
 	lcd_writecom(0x30);	//acorda
-	lcd_writecom(0x39);	//define função
+	lcd_writecom(0x39);	//define funÃ§Ã£o
 	lcd_writecom(0x14);	//oscilador de frequencia interno
 	lcd_writecom(0x56);	//controle liga desliga
 	lcd_writecom(0x6D);	//controle seguidor
@@ -345,7 +264,7 @@ lcd_init(void)
 	delay_ms(20);
 }
 
-// envia quatro bytes (dois bytes de configuração repetidos uma segunda vez, e retorna dois bytes
+// envia quatro bytes (dois bytes de configuraÃ§Ã£o repetidos uma segunda vez, e retorna dois bytes
 
 int
 therm_transact(void)
@@ -383,7 +302,7 @@ therm_transact(void)
   return(ret);
 }
 
-Int local_compensation(int local_code) //está função transforma o código do sensor de temperatura interna para o de compensação, no qual ainda é adicionado ao código do termopar
+Int local_compensation(int local_code) //estÃ¡ funÃ§Ã£o transforma o cÃ³digo do sensor de temperatura interna para o de compensaÃ§Ã£o, no qual ainda Ã© adicionado ao cÃ³digo do termopar
 {
 	float tmp,local_temp;
 	int comp;
@@ -443,7 +362,7 @@ Int local_compensation(int local_code) //está função transforma o código do sens
 	return comp;
 }
 
-//está função é usada para converter resultados do conversor AD para temperatura
+//estÃ¡ funÃ§Ã£o Ã© usada para converter resultados do conversor AD para temperatura
 Int adc_code2temp(int code)	
 {
 	float temp;
@@ -538,7 +457,7 @@ Int adc_code2temp(int code)
 	return t;
 }
 
-//configura e inicia a conversão
+//configura e inicia a conversÃ£o
 void
 ads_config(unsigned int mode, unsigned int chan)
 {
@@ -566,7 +485,7 @@ ads_config(unsigned int mode, unsigned int chan)
 	ret=therm_transact();
 }
 
-//ler o resultado da conversão AD e inicia uma nova conversão
+//ler o resultado da conversÃ£o AD e inicia uma nova conversÃ£o
 int
 ads_read(unsigned int mode, unsigned int chan)
 {
@@ -606,9 +525,9 @@ get_measurement(void)
 	
 	ads_config(INTERNAL_SENSOR,0);  //inicia a medida do sensor de temperatura interna
 	delay_ms(10);
-	local_data=ads_read(EXTERNAL_SIGNAL,0); // ler a medição do sensor de temperatura interna e inicia o sensor de temperatura externa
+	local_data=ads_read(EXTERNAL_SIGNAL,0); // ler a mediÃ§Ã£o do sensor de temperatura interna e inicia o sensor de temperatura externa
 	delay_ms(10);
-	result=ads_read(EXTERNAL_SIGNAL,0); //ler a medição do sensor de temperatura externa e reinicia o sensor externo	
+	result=ads_read(EXTERNAL_SIGNAL,0); //ler a mediÃ§Ã£o do sensor de temperatura externa e reinicia o sensor externo	
 	local_comp = local_compensation(local_data);
 	result = result + local_comp;
 	result=result & 0xffff;
@@ -623,7 +542,7 @@ get_measurement_fast(void)
 	int result;
 	double result_d;
 	
-	result=ads_read(EXTERNAL_SIGNAL,0); //ler a medição do sensor de temperatura externa a reinicia o sensort
+	result=ads_read(EXTERNAL_SIGNAL,0); //ler a mediÃ§Ã£o do sensor de temperatura externa a reinicia o sensort
 	result = result + local_comp;
 	result=result & 0xffff;
 	result = adc_code2temp(result);
@@ -788,7 +707,7 @@ main(int argc, char* argv[])
 
 	if (repeat==0)
 	{
-		//mostra uma única medição e sai
+		//mostra uma Ãºnica mediÃ§Ã£o e sai
 		tval=get_measurement();
 		if (showtime)
 		{
@@ -819,11 +738,11 @@ main(int argc, char* argv[])
 	
 	if (dofile)
 	{
-		//linha 1 do arquivo de saída vai conter as três colunas de descrição
+		//linha 1 do arquivo de saÃ­da vai conter as trÃªs colunas de descriÃ§Ã£o
 		fprintf(outfile, "Time HH:MM:SS,Elapsed Sec,Temp C\n");
 	}
 	
-	//Alinhar em um número inteiro de segundos e obter o horário atual
+	//Alinhar em um nÃºmero inteiro de segundos e obter o horÃ¡rio atual
   mytime = time(NULL);
   tstime.tv_sec=mytime+1;
   tstime.tv_nsec=0;
@@ -860,7 +779,7 @@ main(int argc, char* argv[])
 		lcd_clear();
         sprintf(tstring, "%7.1f", tval);
 		lcd_display_string(1, tstring);
-		// aguarda por um período de tempo
+		// aguarda por um perÃ­odo de tempo
 		mytime++;
 		tstime.tv_sec=mytime;
 		elapsed++;
