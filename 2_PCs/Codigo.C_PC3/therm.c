@@ -7,7 +7,7 @@
 #include <sys/ioctl.h>
 #include <stdint.h>
 #include <linux/spi/spidev.h>
-#include <unistd.h> // sleep
+#include <unistd.h> // dormir
 #include <time.h>
 #include <sys/mman.h>
 #include <string.h>
@@ -16,7 +16,7 @@
 // definições
 #define DBG_PRINT 0
 #define BCM2708_PERI_BASE        0x20000000
-#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
+#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* controlador GPIO  */
 #define PAGE_SIZE (4*1024)
 #define BLOCK_SIZE (4*1024)
 
@@ -63,7 +63,6 @@ int dofile;
 FILE* outfile;
 int lcd_initialised=0;
 uint8_t spi_bits = 8;
-//uint32_t spi_speed = 2621440;
 uint32_t spi_speed = 3932160;
 unsigned char txbuf[BUFSIZE];
 unsigned char rxbuf[BUFSIZE];
